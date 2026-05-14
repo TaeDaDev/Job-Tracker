@@ -1,4 +1,7 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+import path from "path";
+dotenv.config({ path: path.join(path.dirname(fileURLToPath(import.meta.url)), ".env") });
 import cors from "cors";
 import express from "express";
 import { createClient } from "@supabase/supabase-js";
