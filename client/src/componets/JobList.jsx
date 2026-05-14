@@ -58,6 +58,8 @@ const JobList = ({ jobs, onEdit, onDelete }) => {
                     >
                       {job[col]}
                     </span>
+                  ) : col === "application_date" ? (
+                    job[col]?.slice(0, 10) || ""
                   ) : (
                     job[col]
                   )}

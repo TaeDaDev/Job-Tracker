@@ -4,6 +4,8 @@ const inputClass =
   "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent";
 
 const JobForm = ({ job, onCancel, onSubmit }) => {
+  const [errors, setErrors] = useState({});
+
   const [formData, setFormData] = useState({
     company_name: job?.company_name || "",
     job_title: job?.job_title || "",
@@ -18,6 +20,27 @@ const JobForm = ({ job, onCancel, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const newErrors = {};
+    if (!formData.company_name.trim())
+      newErrors.company_name = "Company name is required.";
+    if (!formData.job_title.trim())
+      newErrors.job_title = "Job title is required.";
+    if (!formData.status) newErrors.status = "Please select a status.";
+    if (
+      formData.application_date &&
+      isNaN(Date.parse(formData.application_date))
+    ) {
+      newErrors.application_date = "Please enter a valid date.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    formData.application_date = formData.application_date || null;
     onSubmit(formData);
   };
 
@@ -35,6 +58,9 @@ const JobForm = ({ job, onCancel, onSubmit }) => {
           onChange={handleChange}
           className={inputClass}
         />
+        {errors.company_name && (
+          <p className="text-xs text-red-500 mt-1">{errors.company_name}</p>
+        )}
       </div>
 
       <div>
@@ -49,6 +75,9 @@ const JobForm = ({ job, onCancel, onSubmit }) => {
           onChange={handleChange}
           className={inputClass}
         />
+        {errors.job_title && (
+          <p className="text-xs text-red-500 mt-1">{errors.job_title}</p>
+        )}
       </div>
 
       <div>
@@ -67,6 +96,9 @@ const JobForm = ({ job, onCancel, onSubmit }) => {
           <option value="Rejected">Rejected</option>
           <option value="Offer">Offer</option>
         </select>
+        {errors.status && (
+          <p className="text-xs text-red-500 mt-1">{errors.status}</p>
+        )}
       </div>
 
       <div>
@@ -92,8 +124,11 @@ const JobForm = ({ job, onCancel, onSubmit }) => {
           name="application_date"
           value={formData.application_date}
           onChange={handleChange}
-          className={inputClass}
+          className={`${inputClass} ${!formData.application_date ? "text-transparent" : ""}`}
         />
+        {errors.application_date && (
+          <p className="text-xs text-red-500 mt-1">{errors.application_date}</p>
+        )}
       </div>
 
       <div className="flex gap-3 pt-2">

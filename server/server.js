@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/jobs", async (req, res) => {
-  const { data, error } = await supabase.from("jobs").select("*");
+  const { data, error } = await supabase.from("jobs").select("id,company_name, job_title, status, notes, application_date");
   if (error) {
     res.status(500).json({ error: error.message });
   } else {
@@ -24,10 +24,13 @@ app.get("/jobs", async (req, res) => {
 
 app.post("/jobs", async (req, res) => {
   const { company_name, job_title, status, notes, application_date } = req.body;
+  if (!company_name?.trim() || !job_title?.trim() || !status) {
+    return res.status(400).json({ error: "company_name, job_title, and status are required." });
+  }
   const { data, error } = await supabase
     .from("jobs")
     .insert([{ company_name, job_title, status, notes, application_date }])
-    .select("*")
+    .select("id, company_name, job_title, status, notes, application_date")
     .single();
   if (error) {
     res.status(500).json({ error: error.message });
@@ -39,11 +42,14 @@ app.post("/jobs", async (req, res) => {
 app.put("/jobs/:id", async (req, res) => {
   const { id } = req.params;
   const { company_name, job_title, status, notes, application_date } = req.body;
+  if (!company_name?.trim() || !job_title?.trim() || !status) {
+    return res.status(400).json({ error: "company_name, job_title, and status are required." });
+  }
   const { data, error } = await supabase
     .from("jobs")
     .update({ company_name, job_title, status, notes, application_date })
     .eq("id", id)
-    .select("*")
+    .select("id, company_name, job_title, status, notes, application_date")
     .single();
   if (error) {
     res.status(500).json({ error: error.message });
@@ -58,7 +64,7 @@ app.delete("/jobs/:id", async (req, res) => {
     .from("jobs")
     .delete()
     .eq("id", id)
-    .select("*")
+    .select("id, company_name, job_title, status, notes, application_date")
     .single();
   if (error) {
     res.status(500).json({ error: error.message });
