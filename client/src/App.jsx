@@ -3,7 +3,7 @@ import JobList from "./componets/JobList";
 import { useState, useEffect } from "react";
 import FilterJobs from "./componets/FilterJobs";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL || "";
 
 function App() {
   const [jobs, setJobs] = useState([]);
