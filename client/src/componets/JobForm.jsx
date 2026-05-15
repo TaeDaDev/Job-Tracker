@@ -40,8 +40,13 @@ const JobForm = ({ job, onCancel, onSubmit }) => {
     }
 
     setErrors({});
-    formData.application_date = formData.application_date || null;
-    onSubmit(formData);
+    onSubmit({
+      company_name: formData.company_name.trim(),
+      job_title: formData.job_title.trim(),
+      status: formData.status,
+      notes: formData.notes.trim(),
+      application_date: formData.application_date || null,
+    });
   };
 
   return (

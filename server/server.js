@@ -1,7 +1,9 @@
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import path from "path";
-dotenv.config({ path: path.join(path.dirname(fileURLToPath(import.meta.url)), ".env") });
+dotenv.config({
+  path: path.join(path.dirname(fileURLToPath(import.meta.url)), ".env"),
+});
 import cors from "cors";
 import express from "express";
 import { createClient } from "@supabase/supabase-js";
@@ -13,11 +15,13 @@ const supabase = createClient(
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173" }));
 app.use(express.json());
 
 app.get("/jobs", async (req, res) => {
-  const { data, error } = await supabase.from("jobs").select("id,company_name, job_title, status, notes, application_date");
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("id,company_name, job_title, status, notes, application_date");
   if (error) {
     res.status(500).json({ error: error.message });
   } else {
@@ -28,13 +32,21 @@ app.get("/jobs", async (req, res) => {
 app.post("/jobs", async (req, res) => {
   const { company_name, job_title, status, notes, application_date } = req.body;
   if (!company_name?.trim() || !job_title?.trim() || !status) {
-    return res.status(400).json({ error: "company_name, job_title, and status are required." });
+    return res
+      .status(400)
+      .json({ error: "company_name, job_title, and status are required." });
+  }
+  if (application_date && isNaN(Date.parse(application_date))) {
+    return res
+      .status(400)
+      .json({ error: "application_date must be a valid date string." });
   }
   const { data, error } = await supabase
     .from("jobs")
     .insert([{ company_name, job_title, status, notes, application_date }])
     .select("id, company_name, job_title, status, notes, application_date")
     .single();
+
   if (error) {
     res.status(500).json({ error: error.message });
   } else {
@@ -46,7 +58,14 @@ app.put("/jobs/:id", async (req, res) => {
   const { id } = req.params;
   const { company_name, job_title, status, notes, application_date } = req.body;
   if (!company_name?.trim() || !job_title?.trim() || !status) {
-    return res.status(400).json({ error: "company_name, job_title, and status are required." });
+    return res
+      .status(400)
+      .json({ error: "company_name, job_title, and status are required." });
+  }
+  if (application_date && isNaN(Date.parse(application_date))) {
+    return res
+      .status(400)
+      .json({ error: "application_date must be a valid date string." });
   }
   const { data, error } = await supabase
     .from("jobs")
@@ -55,6 +74,9 @@ app.put("/jobs/:id", async (req, res) => {
     .select("id, company_name, job_title, status, notes, application_date")
     .single();
   if (error) {
+    if (error.code === "PGRST116") {
+      return res.status(404).json({ error: "Job not found." });
+    }
     res.status(500).json({ error: error.message });
   } else {
     res.json(data);
@@ -63,12 +85,7 @@ app.put("/jobs/:id", async (req, res) => {
 
 app.delete("/jobs/:id", async (req, res) => {
   const { id } = req.params;
-  const { data, error } = await supabase
-    .from("jobs")
-    .delete()
-    .eq("id", id)
-    .select("id, company_name, job_title, status, notes, application_date")
-    .single();
+  const { data, error } = await supabase.from("jobs").delete().eq("id", id);
   if (error) {
     res.status(500).json({ error: error.message });
   } else {
