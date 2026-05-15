@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const inputClass =
   "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent";
@@ -13,6 +13,8 @@ const JobForm = ({ job, onCancel, onSubmit }) => {
     notes: job?.notes || "",
     application_date: job?.application_date || "",
   });
+
+  const dateRef = useRef(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -124,12 +126,13 @@ const JobForm = ({ job, onCancel, onSubmit }) => {
         <label className="block text-xs font-medium text-gray-600 mb-1">
           Application Date
         </label>
-        <input
+        <input ref={dateRef}
           type="date"
           name="application_date"
           value={formData.application_date}
           onChange={handleChange}
-          className={`${inputClass} ${!formData.application_date ? "text-transparent" : ""}`}
+          onClick={() => dateRef.current.showPicker()}
+          className={`${inputClass} ${!formData.application_date ? "font-light text-gray-500" : ""}`}
         />
         {errors.application_date && (
           <p className="text-xs text-red-500 mt-1">{errors.application_date}</p>
