@@ -12,7 +12,7 @@ function App() {
   const [filterStatus, setFilterStatus] = useState("All");
 
   useEffect(() => {
-    fetch(`${apiUrl}/jobs`)
+    fetch(`${apiUrl}/api/jobs`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch jobs");
@@ -26,7 +26,7 @@ function App() {
   }, []);
 
   const handleAddJob = (job) => {
-    fetch(`${apiUrl}/jobs`, {
+    fetch(`${apiUrl}/api/jobs`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(job),
@@ -47,7 +47,7 @@ function App() {
   };
 
   const handleEditJob = (updatedJob) => {
-    fetch(`${apiUrl}/jobs/${selectedJob.id}`, {
+    fetch(`${apiUrl}/api/jobs/${selectedJob.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedJob),
@@ -69,7 +69,7 @@ function App() {
   };
 
   const handleDeleteJob = (id) => {
-    fetch(`${apiUrl}/jobs/${id}`, {
+    fetch(`${apiUrl}/api/jobs/${id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     }).then(() => setJobs(jobs.filter((job) => job.id !== id)));

@@ -18,7 +18,7 @@ const app = express();
 app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173" }));
 app.use(express.json());
 
-app.get("/jobs", async (req, res) => {
+app.get("/api/jobs", async (req, res) => {
   const { data, error } = await supabase
     .from("jobs")
     .select("id,company_name, job_title, status, notes, application_date");
@@ -29,7 +29,7 @@ app.get("/jobs", async (req, res) => {
   }
 });
 
-app.post("/jobs", async (req, res) => {
+app.post("/api/jobs", async (req, res) => {
   const { company_name, job_title, status, notes, application_date } = req.body;
   if (!company_name?.trim() || !job_title?.trim() || !status) {
     return res
@@ -54,7 +54,7 @@ app.post("/jobs", async (req, res) => {
   }
 });
 
-app.put("/jobs/:id", async (req, res) => {
+app.put("/api/jobs/:id", async (req, res) => {
   const { id } = req.params;
   const { company_name, job_title, status, notes, application_date } = req.body;
   if (!company_name?.trim() || !job_title?.trim() || !status) {
@@ -83,7 +83,7 @@ app.put("/jobs/:id", async (req, res) => {
   }
 });
 
-app.delete("/jobs/:id", async (req, res) => {
+app.delete("/api/jobs/:id", async (req, res) => {
   const { id } = req.params;
   const { data, error } = await supabase.from("jobs").delete().eq("id", id);
   if (error) {
