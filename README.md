@@ -26,8 +26,8 @@ A full-stack web app for managing job applications — built with React, Node.js
 |---|---|
 | Frontend | React.js, [Tailwind CSS / MUI] |
 | Backend | Node.js, Express.js |
-| Database | [e.g. PostgreSQL / MongoDB / SQLite — update as needed] |
-| Testing | Jest |
+| Database | SQLite |
+
 
 
 ---
